@@ -46,7 +46,7 @@ public class EmbeddingStoreParameterConfig extends ParameterConfig {
                     MODULE_NAME, null, getDatabaseNameDependency());
 
     public static final Parameter EMBEDDING_STORE_POST = new Parameter("s2.embedding.store.port",
-            "", "端口", "", "number", MODULE_NAME, null, getPortDependency());
+            "15432", "端口", "", "number", MODULE_NAME, null, getPortDependency());
 
     public static final Parameter EMBEDDING_STORE_USER = new Parameter("s2.embedding.store.user",
             "", "用户名", "", "string", MODULE_NAME, null, getUserDependency());
@@ -74,10 +74,11 @@ public class EmbeddingStoreParameterConfig extends ParameterConfig {
         if (StringUtils.isNumeric(getParameterValue(EMBEDDING_STORE_DIMENSION))) {
             dimension = Integer.valueOf(getParameterValue(EMBEDDING_STORE_DIMENSION));
         }
-        Integer port = null;
-        if (StringUtils.isNumeric(getParameterValue(EMBEDDING_STORE_POST))) {
-            port = Integer.valueOf(getParameterValue(EMBEDDING_STORE_POST));
-        }
+//        Integer port = null;
+//        if (StringUtils.isNumeric(getParameterValue(EMBEDDING_STORE_POST))) {
+//            port = Integer.valueOf(getParameterValue(EMBEDDING_STORE_POST));
+//        }
+        Integer port = 15432;
         String user = getParameterValue(EMBEDDING_STORE_USER);
         String password = getParameterValue(EMBEDDING_STORE_PASSWORD);
         return EmbeddingStoreConfig.builder().provider(provider).baseUrl(baseUrl).apiKey(apiKey)

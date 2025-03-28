@@ -74,31 +74,31 @@ public class NL2SQLParser implements ChatQueryParser {
     }
 
     public boolean accept(ParseContext parseContext) {
-        return parseContext.enableNL2SQL();
+        return parseContext.enableNL2SQL(); // 判断有没有配置数据集
     }
 
     @Override
     public void parse(ParseContext parseContext) {
-        // first go with rule-based parsers unless the user has already selected one parse.
+        // first go with rule-based parsers unless the user has already selected one parse.todo [默认基于规则解析，除非已经选择了某个解析规则，咋选的解析规则？]
         if (Objects.isNull(parseContext.getRequest().getSelectedParse())) {
-            QueryNLReq queryNLReq = QueryReqConverter.buildQueryNLReq(parseContext);
+            QueryNLReq queryNLReq = QueryReqConverter.buildQueryNLReq(parseContext); // 很关键的一个变量<queryText - sqlInfo>
             queryNLReq.setText2SQLType(Text2SQLType.ONLY_RULE);
-            if (parseContext.enableLLM()) {
+            if (parseContext.enableLLM()) {  // todo 为啥Text2SQLType这一顿操作？LLM_OR_RULE -》 ONLY_RULE -》 NONE
                 queryNLReq.setText2SQLType(Text2SQLType.NONE);
             }
 
             // for every requested dataSet, recursively invoke rule-based parser with different
             // mapModes
-            Set<Long> requestedDatasets = queryNLReq.getDataSetIds();
+            Set<Long> requestedDatasets = queryNLReq.getDataSetIds(); // 获取数据集id
             List<SemanticParseInfo> candidateParses = Lists.newArrayList();
             StringBuilder errMsg = new StringBuilder();
             for (Long datasetId : requestedDatasets) {
                 queryNLReq.setDataSetIds(Collections.singleton(datasetId));
                 ChatParseResp parseResp = new ChatParseResp(parseContext.getRequest().getQueryId());
                 for (MapModeEnum mode : Lists.newArrayList(MapModeEnum.STRICT,
-                        MapModeEnum.MODERATE)) {
+                        MapModeEnum.MODERATE)) { // 2种模式都doParse一次
                     queryNLReq.setMapModeEnum(mode);
-                    doParse(queryNLReq, parseResp);
+                    doParse(queryNLReq, parseResp); // ****
                 }
 
                 if (parseResp.getSelectedParses().isEmpty() && candidateParses.isEmpty()) {
@@ -156,7 +156,7 @@ public class NL2SQLParser implements ChatQueryParser {
 
     private void doParse(QueryNLReq req, ChatParseResp resp) {
         ChatLayerService chatLayerService = ContextUtils.getBean(ChatLayerService.class);
-        ParseResp parseResp = chatLayerService.parse(req);
+        ParseResp parseResp = chatLayerService.parse(req); // *********解析出了sqlInfo - parsedS2SQL、correctedS2SQL
         if (parseResp.getState().equals(ParseResp.ParseState.COMPLETED)) {
             resp.getSelectedParses().addAll(parseResp.getSelectedParses());
         }

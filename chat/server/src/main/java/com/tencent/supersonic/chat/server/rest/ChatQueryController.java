@@ -39,13 +39,15 @@ public class ChatQueryController {
     @PostMapping("parse")
     public Object parse(@RequestBody ChatParseReq chatParseReq, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        // step1 ---- parse
         chatParseReq.setUser(UserHolder.findUser(request, response));
-        return chatQueryService.parse(chatParseReq);
+        return chatQueryService.parse(chatParseReq);// queryText:各公司员工都有多少人
     }
 
     @PostMapping("execute")
     public Object execute(@RequestBody ChatExecuteReq chatExecuteReq, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
+        // step2 ---- execute
         chatExecuteReq.setUser(UserHolder.findUser(request, response));
         return chatQueryService.execute(chatExecuteReq);
     }

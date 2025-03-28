@@ -33,9 +33,11 @@ public class SqlExecutor implements ChatQueryExecutor {
     @SneakyThrows
     @Override
     public QueryResult execute(ExecuteContext executeContext) {
+        // 执行查询
         QueryResult queryResult = doExecute(executeContext);
-
+        // 返回结果值
         if (queryResult != null) {
+            // 此处为对应页面返回值
             String textResult = ResultFormatter.transform2TextNew(queryResult.getQueryColumns(),
                     queryResult.getQueryResults());
             queryResult.setTextResult(textResult);

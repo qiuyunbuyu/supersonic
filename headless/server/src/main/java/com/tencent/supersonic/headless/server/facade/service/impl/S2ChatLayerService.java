@@ -68,7 +68,7 @@ public class S2ChatLayerService implements ChatLayerService {
         ParseResp parseResp = new ParseResp(queryNLReq.getQueryText());
         ChatQueryContext queryCtx = buildChatQueryContext(queryNLReq);
         queryCtx.setParseResp(parseResp);
-        if (queryCtx.getMapInfo().isEmpty()) {
+        if (queryCtx.getMapInfo().isEmpty()) { // queryCtx.getChatWorkflowState() 状态机流转来推进“解析”： queryCtx.getChatWorkflowState()
             chatWorkflowEngine.start(ChatWorkflowState.MAPPING, queryCtx);
         } else {
             chatWorkflowEngine.start(ChatWorkflowState.PARSING, queryCtx);

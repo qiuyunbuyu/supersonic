@@ -89,18 +89,18 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     @Override
     public ChatParseResp parse(ChatParseReq chatParseReq) {
         Long queryId = chatParseReq.getQueryId();
-        if (Objects.isNull(queryId)) {
+        if (Objects.isNull(queryId)) {  // 生成queryID
             queryId = chatManageService.createChatQuery(chatParseReq);
             chatParseReq.setQueryId(queryId);
         }
-
+        //parse
         ParseContext parseContext = buildParseContext(chatParseReq, new ChatParseResp(queryId));
-        for (ChatQueryParser parser : chatQueryParsers) {
+        for (ChatQueryParser parser : chatQueryParsers) { //ChatQueryParser 下的3个实现类
             if (parser.accept(parseContext)) {
                 parser.parse(parseContext);
             }
         }
-
+        // processor
         for (ParseResultProcessor processor : parseResultProcessors) {
             if (processor.accept(parseContext)) {
                 processor.process(parseContext);
@@ -121,7 +121,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         ExecuteContext executeContext = buildExecuteContext(chatExecuteReq);
         for (ChatQueryExecutor chatQueryExecutor : chatQueryExecutors) {
             if (chatQueryExecutor.accept(executeContext)) {
-                queryResult = chatQueryExecutor.execute(executeContext);
+                queryResult = chatQueryExecutor.execute(executeContext); // 调用具体的Executor来执行，本例为SqlExecutor
                 if (queryResult != null) {
                     break;
                 }
@@ -170,9 +170,9 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     private ExecuteContext buildExecuteContext(ChatExecuteReq chatExecuteReq) {
         ExecuteContext executeContext = new ExecuteContext(chatExecuteReq);
-        SemanticParseInfo parseInfo = chatManageService.getParseInfo(chatExecuteReq.getQueryId(),
+        SemanticParseInfo parseInfo = chatManageService.getParseInfo(chatExecuteReq.getQueryId(),// 1. 从queryID来取出parseinfo
                 chatExecuteReq.getParseId());
-        Agent agent = agentService.getAgent(chatExecuteReq.getAgentId());
+        Agent agent = agentService.getAgent(chatExecuteReq.getAgentId());// 2. 确认agent
         executeContext.setAgent(agent);
         executeContext.setParseInfo(parseInfo);
         return executeContext;

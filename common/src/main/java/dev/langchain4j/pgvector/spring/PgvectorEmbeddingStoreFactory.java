@@ -33,7 +33,7 @@ public class PgvectorEmbeddingStoreFactory extends BaseEmbeddingStoreFactory {
     @Override
     public EmbeddingStore<TextSegment> createEmbeddingStore(String collectionName) {
         return PgVectorEmbeddingStore.builder().host(storeProperties.getHost())
-                .port(storeProperties.getPort()).database(storeProperties.getDatabase())
+                .port(15432).database(storeProperties.getDatabase())
                 .user(storeProperties.getUser()).password(storeProperties.getPassword())
                 .table(collectionName).dimension(storeProperties.getDimension()).build();
     }

@@ -34,12 +34,13 @@ public class ChatWorkflowEngine {
     private final List<SemanticCorrector> semanticCorrectors =
             CoreComponentFactory.getSemanticCorrectors();
 
+    // ---------------------- 最核心的地方，“查询形式的变化 Text -> sql”都以状态的变更而推进 -----------------------
     public void start(ChatWorkflowState initialState, ChatQueryContext queryCtx) {
         ParseResp parseResult = queryCtx.getParseResp();
         queryCtx.setChatWorkflowState(initialState);
         while (queryCtx.getChatWorkflowState() != ChatWorkflowState.FINISHED) {
             switch (queryCtx.getChatWorkflowState()) {
-                case MAPPING:
+                case MAPPING: // 最开始的一个状态
                     performMapping(queryCtx);
                     if (queryCtx.getMapInfo().isEmpty()) {
                         parseResult.setState(ParseResp.ParseState.FAILED);
@@ -87,7 +88,7 @@ public class ChatWorkflowEngine {
             }
         }
     }
-
+    // Mapping 逻辑
     private void performMapping(ChatQueryContext queryCtx) {
         if (Objects.isNull(queryCtx.getMapInfo())
                 || MapUtils.isEmpty(queryCtx.getMapInfo().getDataSetElementMatches())) {
@@ -146,7 +147,7 @@ public class ChatWorkflowEngine {
                 if (StringUtils.isNotBlank(explain.getErrMsg())) {
                     errorMsg.add(explain.getErrMsg());
                 }
-                log.info(
+                log.info(    // 3个级别的SQL解析完成的地方
                         "SqlInfoProcessor results:\n"
                                 + "Parsed S2SQL: {}\nCorrected S2SQL: {}\nQuery SQL: {}",
                         StringUtils.normalizeSpace(parseInfo.getSqlInfo().getParsedS2SQL()),

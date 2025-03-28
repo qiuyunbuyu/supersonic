@@ -118,7 +118,7 @@ public abstract class S2BaseDemo implements CommandLineRunner {
     protected DatabaseResp addDatabaseIfNotExist() {
         List<DatabaseResp> databaseList = databaseService.getDatabaseList(defaultUser);
         if (!CollectionUtils.isEmpty(databaseList)) {
-            return databaseList.get(0);
+            return databaseList.get(0); // ? 为啥只返回了第一个
         }
         String url = dataSourceProperties.getUrl();
         DatabaseReq databaseReq = new DatabaseReq();

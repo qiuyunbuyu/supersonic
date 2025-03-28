@@ -102,7 +102,7 @@ public class S2SemanticLayerService implements SemanticLayerService {
     @SneakyThrows
     public SemanticQueryResp queryByReq(SemanticQueryReq queryReq, User user) {
         TaskStatusEnum state = TaskStatusEnum.SUCCESS;
-        log.info("[queryReq:{}]", queryReq);
+        log.info("{}]", queryReq); // [queryReq:QuerySqlReq(sql=SELECT 公司id, 公司名称, SUM(员工数) AS _员工数_ FROM 企业数据集 GROUP BY 公司id, 公司名称, limit=null)]
         try {
             // 1.initStatInfo
             statUtils.initStatInfo(queryReq, user);
@@ -132,7 +132,7 @@ public class S2SemanticLayerService implements SemanticLayerService {
             // 4.execute query
             SemanticQueryResp queryResp = null;
             for (QueryExecutor queryExecutor : queryExecutors) {
-                if (queryExecutor.accept(queryStatement)) {
+                if (queryExecutor.accept(queryStatement)) { // JdbcExecutor
                     queryResp = queryExecutor.execute(queryStatement);
                     queryUtils.populateQueryColumns(queryResp, queryStatement.getSemanticSchema());
                 }
